@@ -6,7 +6,7 @@ A tool to visualise live and historical data from the visl.org website
 # ABOUT
 
 This app is  a result of a hobby project done to visualize, and in some cases analyse, publicly 
-available data from the Vancouver Island Soccer League website [https://visl.org/] (https://visl.org/). I have a long 
+available data from the Vancouver Island Soccer League website [visl.org/](https://visl.org/). I have a long 
 list of things to do in my head to imporve it. Some of them are listed below. If you would like to see more features 
 or contribute in any way, the best place to reach me is on the project's repository at 
 [https://github.com/Ze-sys/vizl](https://github.com/Ze-sys/vizl)
@@ -54,10 +54,8 @@ or contribute in any way, the best place to reach me is on the project's reposit
 
 # A Note on Data 
 
-    The visl league is over 100 years old (established 1895). Some of the teams today are almost as old as the league itself. Some are only a couple of years young. 
-    
+    The visl league is over 100 years old (established 1895). Some of the teams today are almost as old as the league itself. Some are only a couple of years young.  
     The league is a smoothly run machine, well managed by great individuals. 
-
     The following observations and any recommendations given are meant for further improvements with respect to data quality. 
 
 # Observations and Recommendations
@@ -73,5 +71,5 @@ or contribute in any way, the best place to reach me is on the project's reposit
 -  Make more data easily accessible to the public
 -  Encourage teams to remain in the league by providing the support they need. Additional fundings from local businesses and governmants maybe required. Canada is on the verge of qualifying for the FIFA World Cup 2022. Without amatuer leagues like the visl, that wouldn't have been possible
 -  Encourage teams to keep their base names for historical record keeping reasons. It is understood sponsors have a strong say in team names in amateur leageues, but there must be an alternative to changing a team's name significantly. Spornsors are part of the league's history, and they maybe willing to compormise if they are made awre of the issue. Another solution to this problem would be using special tags to teams. That way teams can change their public names to meet sponsor requirements while still being identified as the same team to the league by thir tags.
-]
+
 
