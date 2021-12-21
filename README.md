@@ -57,13 +57,13 @@ The visl league is over 100 years old (established 1895). Some of the teams toda
 
 # Observations and Recommendations
 
-## Observations and Recommendations
+## Observations 
 
 - Not much data publicly available, at least on the visl website
 - Noticeable team attrition rates, even within the limited data checked
 - Teams tend to change their base names too often, and sometimes for no apparent reason. One good example is Gorge Us Guys turned into Gorge Us-Guys. A very strong team. They would like to keep their history in the league more than others
 
-## Observations and Recommendations
+## Recommendations
 
 -  Make more data easily accessible to the public
 -  Encourage teams to remain in the league by providing the support they need. Additional fundings from local businesses and governments may be required. Canada is on the verge of qualifying for the FIFA World Cup 2022. Without amatuer leagues like the visl, that wouldn't have been possible

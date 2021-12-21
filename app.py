@@ -62,7 +62,7 @@ class CAPTION:
         '''
 
 
-def write_table(X, width=None, height=None):
+def write_table(x, width=None, height=None):
     '''
     Function to write a table to the app
     INPUT:
@@ -70,8 +70,10 @@ def write_table(X, width=None, height=None):
     width: width of the table
     height: height of the table
     '''
-    st.dataframe(X.data.set_index(X.col_to_index, inplace=False).drop(columns=X.col_to_drop).style.format(precision=0),
+    st.dataframe(x.data.set_index(x.col_to_index, inplace=False).drop(columns=x.col_to_drop).style.format(precision=0),
                  width, height)
+    # st.plotly_chart(x.data.set_index(x.col_to_index, inplace=False).drop(columns=x.col_to_drop).style.format(precision=0),
+    # width=width, height=height)
 
 
 @st.cache
@@ -79,14 +81,14 @@ def convert_df(df):
     return df.to_csv().encode('utf-8')
 
 
-def csv_downloader(X):
+def csv_downloader(x):
     st.markdown(
-        f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754DF3;"><br> {X.caption}</h6></br>''',
+        f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754DF3;"><br> {x.caption}</h6></br>''',
         unsafe_allow_html=True)
     st.download_button(
         "Download Data",
-        convert_df(X.data),
-        X.caption + '.csv',
+        convert_df(x.data),
+        x.caption + '.csv',
         "text/csv",
         key='download-csv_format'
     )
@@ -459,7 +461,7 @@ with scheduled_fixtures_xpdr:
 
     C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Date, 'drop': display_data.Date.name})
     csv_downloader(C)
-    write_table(C, None, 100)
+    write_table(C, None, 110)
 
 # Display standings tables
 
@@ -484,7 +486,7 @@ with past_seasons_standings_xpdr:
             C = CAPTION(
                 {'caption': caption, 'data': display_data, 'index': display_data.Rank, 'drop': display_data.Rank.name})
             csv_downloader(C)
-            write_table(C, 1200, 100)
+            write_table(C, 1200, 110)
     else:
         st.write(f'End of previous seasons data available for Division {dv}')
 
@@ -492,12 +494,12 @@ with past_seasons_standings_xpdr:
 
 S = sorted(df_goal_pool.Season.unique(), reverse=True)
 
-caption = f'Division {dv} Top Gaol Scorers ({S[0]})'
+caption = f'Division {dv} Top Goal Scorers ({S[0]})'
 display_data = df_goal_pool.query(f"Season == '{S[0]}'").sort_values(by=[f'Goals_div_{dv}'],
                                                                      ascending=False).reset_index(drop=True)
 C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Season, 'drop': display_data.Season.name})
 csv_downloader(C)
-write_table(C, 1200, 100)
+write_table(C, 1200, 110)
 
 past_season_goal_pool_xpdr = st.expander(f'Show Division {dv} Top Goal Scorers for previous seasons (if available)')
 
@@ -511,7 +513,7 @@ with past_season_goal_pool_xpdr:
             C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Season,
                          'drop': display_data.Season.name})
             csv_downloader(C)
-            write_table(C, 1200, 100)
+            write_table(C, 1200, 110)
     else:
         st.write(f'End of previous seasons data available for Division {dv}')
 
@@ -522,7 +524,7 @@ display_data = df_shutout_pool.query(f"Season == '{S[0]}'").sort_values(by=[f'Sh
 C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Season,
              'drop': display_data.Season.name})
 csv_downloader(C)
-write_table(C, 1200, 100)
+write_table(C, 1200, 110)
 
 past_season_shutout_pool_xpdr = st.expander(f'Show Division {dv} Top Goal Keepers for previous seasons (if available)')
 
@@ -536,7 +538,7 @@ with past_season_shutout_pool_xpdr:
             C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Season,
                          'drop': display_data.Season.name})  # usually shorter table  as games added over time.
             csv_downloader(C)  # <-- this is the download button
-            write_table(C, 1200, 100)  # <-- this is the table
+            write_table(C, 1200, 110)  # <-- this is the table
         else:
             st.write(f'End of previous seasons data available for Division {dv}')
 
@@ -752,7 +754,7 @@ with chord_xpdr:
         location=[48.4456201780829, -123.3645977],  # <- of Finny turf
         popup='Finlayson Turf',
         # More work to be done here.
-        icon=folium.Icon(color="black", icon="glyphicon glyphicon-tree-conifer")
+        icon=folium.Icon(color="#a366ff", icon="glyphicon glyphicon-tree-conifer")
     ).add_to(m)
 
     folium_static(m, width=1400, height=360)
@@ -761,97 +763,99 @@ with chord_xpdr:
 # USE CASES LIST
 
 use_cases_list = [
-    "For visl fanatics, you can use the app to get the latest standings and fixtures and results.",
-    "For coaches, you can use the app to get a quick picture of your or other team's performance over time.",
-    "Buy top players from the top teams in the league.",
-    "Sponsor your favorite team.",
-    "Check out the latest news from the league.",
-    "See fixtures predictions.",
-    "Check if Ronaldo plays part time in the league.",
-    "Check if Messi plays part time the league. Currently impossible. Match MVPs used to be a thing on the visl website, but it is not in recent years.",
-    "Know patterns of player migration within the league.",
-    "Know field locations of the games.",
-    "Know field allocations, which field is home to a team etc",
-    "Study inter-season changes and trends such as number of teams across years, number of goals, goals per game played, total goals for or against teams as a fraction of totals etc"
-]
+'-  For visl fanatics, you can use the app to get the latest standings and fixtures and results',
+"-  For coaches, you can use the app to get a quick picture of your or other team's performance over time",
+'-  Buy top players from the top teams in the league',
+'-  Sponsor your favorite team',
+'-  Check out the latest news from the league',
+'-  See fixtures predictions',
+'-  Check if Ronaldo plays part time in the league',
+'-  Check if Messi plays part time in the league. Currently impossible. Match MVPs used to be a thing on the visl website, but it is not in recent years',
+'-  Know patterns of player migration within the league',
+'-  Know field locations of the games',
+'-  Know field allocations, which field is home to a team etc',
+'-  Study inter-season changes and trends such as number of teams across years, number of goals, goals per game played, total goals for or against teams as a fraction of totals etc'
+
+    ]
 xpdr = st.expander('Use cases', expanded=False)
 with xpdr:
     for use_case in use_cases_list:
-        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">- {use_case}</li>',
+        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;"> {use_case}</li>',
                     unsafe_allow_html=True)
 
 # Improvements that may help keeping the league's history better
 
-league_data_imporvements = st.expander("Observations and Recommendations")
-league_data_observation_list = [
-    "Not much data publicly available, at least on the visl website",
-    "Noticeable team attrition rates, even within the limitted data checked.",
-    "Teams tend to change thier base names too often, and sometimes for no apparent reason. One good example is Gorge Us Guys turned into Gorge Us-Guys. A very strong team. They would like to keep thier histor in the league more than others.",
-]
+league_data_imporvements = st.expander("Data Note", expanded=False)
 league_data_imporvements_list = [
-    "Make more data easily accessible to the public.",
-    "Encourage teams to remain in the league by providing the support they need. Additional fundings from local businesses and governmants maybe required. Canada is on the verge of qualifying for the FIFA World Cup 2022. Without amatuer leagues like the visl, that wouldn't have been possible.",
-    "Encourage teams to keep their base names for historical record keeping reasons. It is understood sponsors have a strong say in team names in amateur leageues, but there must be an alternative to changing a team's name significantly. Spornsors are part of the league's history, and they maybe willing to compormise if they are made awre of the issue. Another solution to this problem would be using special tags to teams. That way teams can change their public names to meet sponsor requirements while still being identified as the same team to the league by thir tags."
+"-  Make more data easily accessible to the public",
+"- Encourage teams to remain in the league by providing the support they need. Additional fundings from local businesses and governments may be required. Canada is on the verge of qualifying for the FIFA World Cup 2022. Without amatuer leagues like the visl, that wouldn't have been possible",
+"-  Encourage teams to keep their base names for historical record keeping reasons. It is understood sponsors have a strong say in team names in amateur leagues, but there must be an alternative to changing a team's name significantly. Sponsors are part of the league's history, and they may be willing to compromise if they are made aware of the issue. Another solution to this problem would be using special tags to teams. That way teams can change their public names to meet sponsor requirements while still being identified as the same team to the league by their tags."
 ]
+
+league_data_observation_list = [
+'-  Not much data publicly available, at least on the visl website',
+'-  Noticeable team attrition rates, even within the limited data checked',
+'-  Teams tend to change their base names too often, and sometimes for no apparent reason. One good example is Gorge Us Guys turned into Gorge Us-Guys. A very strong team. They would like to keep their history in the league more than others.'
+  ]
 with league_data_imporvements:
     league_histry = """
-    The visl league is over 100 years old (established 1895). Some of the teams today are almost as old as the league itself. Some are only a couple of years young. 
-    The league is a smoothly run machine, well managed by great individuals. 
-    The following observations and any recommendations given are meant for further improvements with respect to data quality. Othewise, the league is already awesome.  
+    The visl league is over 100 years old (established 1895). Some of the teams today are almost as old as the league itself. 
+    Some are only a couple of years young.  The league is a smoothly run machine, well managed by great individuals. 
+    The following observations and any recommendations given are meant for further improvements with respect to data quality.  
     """
-    st.markdown(f'<h8 style="color: #a366ff;font-size:16px;border-radius:0%;">{league_histry}</h8>',
+    st.markdown(f'<h8 style="color: #a366ff;font-size:12px;border-radius:0%;">{league_histry}</h8>',
                 unsafe_allow_html=True)
 
     st.markdown(f'<h4 style="color: #42f57b;font-size:14px;border-radius:50%;"><br>Observations:</br></h4>',
                 unsafe_allow_html=True)
 
     for obs in league_data_observation_list:
-        st.markdown(f'<h8 style="color: white;font-size:8px;border-radius:0%;">- {obs}</h8>',
+        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">{obs}</li>',
                     unsafe_allow_html=True)
 
     st.markdown(f'<h4 style="color: #42f57b;font-size:14px;border-radius:50%;"><br>Recommendations:</br></h4>',
                 unsafe_allow_html=True)
 
     for impvt in league_data_imporvements_list:
-        st.markdown(f'<h8 style="color: green;font-size:8px;border-radius:0%;">- {impvt}</h8>',
+        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">{impvt}</li>',
                     unsafe_allow_html=True)
 
 # TODO LIST
 todolist = [
-    "Break down section into modules.",
-    "DRY : Use more classess to avoide code duplication.",
-    "Add a sidebar to select the division",
-    "More work needed to handle edge cases, specially with the pool selection feature"
-    "Add a sidebar to select the year",
-    "Add a sidebar to select the team",
-    "Add a sidebar to select the player",
-    "Add a sidebar to select the fixture",
-    "Add a sidebar to select the season",
-    "Add a sidebar to select the game",
-    "Add prediction for the game. This has been almost impossible to do with the amount and quality of data.",
-    "Allow users to select the year and division",
-    "Add more data download links specially for the figures shown",
-    "Allow users to enter thier own data",
-    "Search workflow table to confirm the DATA ticket is entered",
-    "Allow users multiple selections",
-    "The chord diagrams are both beautiful and ugly at the same time. Fix what you can fix."
-    "multiple pages/instances of this app",
-    "Add analytics on Beer, one of the main drivers of the league :)",
+'-  Break down section into modules',
+'-  DRY : Use more classes to avoid code duplication',
+'-  Add a sidebar to select the division',
+'-  More work needed to handle edge cases, specially with the pool selection feature',
+'-  Add a sidebar to select the year',
+'-  Add a sidebar to select the team',
+'-  Add a sidebar to select the player',
+'-  Add a sidebar to select the fixture',
+'-  Add a sidebar to select the season',
+'-  Add a sidebar to select the game',
+'-  Add prediction for the game. This has been almost impossible to do with the amount and quality of data',
+'-  Allow users to select the year and division',
+'-  Add more data download links specially for the figures shown',
+'-  Allow users to enter their own data',
+'-  Search workflow table to confirm the DATA ticket is entered',
+'-  Allow users multiple selections',
+'-  The chord diagrams are both beautiful and ugly at the same time. Fix what you can fix.',
+'-  multiple pages/instances of this app',
+'-  Add analytics on Beer, one of the main drivers of the league :joy:'
 ]
-xpdr = st.expander('A To Do List')
+xpdr = st.expander('To Do')
 with xpdr:
     for tdl in todolist:
-        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">- [ ] {tdl}</li>',
+        st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">{tdl}</li>',
                     unsafe_allow_html=True)
 
 # ABOUT
 about_xpdr = st.expander('About')
 
 about_this_app = """This app is  a result of a hobby project done to visualize, and in some cases analyse, publicly 
-available data from the Vancouver Island Soccer League website [https://visl.org/] (https://visl.org/). I have a long 
-list of things to do in my head to imporve it. Some of them are listed below. If you would like to see more features 
-or contribute in any way, the best place to reach the developer is on the project's repository at [
-https://github.com/Ze-sys/predict_visl_winners](https://github.com/Ze-sys/vizl). """
+available data from the Vancouver Island Soccer League website (https://visl.org/). I have a long 
+list of things to do in my head to imporve it. If you would like to see more features 
+or contribute in any way, the best place to reach me is on the project's repository at 
+https://github.com/Ze-sys/vizl. """
 with about_xpdr:
-    st.markdown(f'<h8 style="color: green;font-size:16px;border-radius:100%;">{about_this_app}</h8>',
+    st.markdown(f'<li style="color: green;font-size:12px;border-radius:50%;">{about_this_app}</li>',
                 unsafe_allow_html=True)
