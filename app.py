@@ -397,8 +397,8 @@ chord1.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
 chord2.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
             hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
 
-hv.save(chord1 + chord2, 'tmp_html_files/chord_all_fixtures_results.html')
-HtmlFile = open("tmp_html_files/chord_all_fixtures_results.html", 'r', encoding='utf-8')
+hv.save(chord1 + chord2, 'teamcrests/chord_all_fixtures_results.html')
+HtmlFile = open("teamcrests/chord_all_fixtures_results.html", 'r', encoding='utf-8')
 source_code = HtmlFile.read()
 html_background = "<style>:root {background-color:#754DF3;}</style>"
 source_code = html_background + source_code
