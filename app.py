@@ -22,7 +22,6 @@ import modules.plot_goals_bar as pg
 import modules.plot_shutout_bar as ps
 import modules.plot_shutout_funnel as psf
 import modules.plot_goal_funnel as pgf
-import modules.shutouts_stats as ss
 import modules.plot_standings_data as psd
 import modules.get_visl_fixture_and_standing_tables as gvfst
 import modules.plot_fixture_results_ts as pfrts
@@ -53,7 +52,6 @@ st.write(
 @st.cache
 def remove_special_chars(x):
     return x.replace("'", '')
-
 
 
 class CAPTION:
@@ -146,7 +144,7 @@ df_goal_pool = filter_pool(df_goal, dv, pool)
 # bar plot for shutouts
 fig_shutout_bar = ps.plot_shutout_bar(df, dv)
 # team summary stats with multi-index
-team_stats = ss.shutout_stats(df, dv)
+# team_stats = ss.shutout_stats(df, dv)
 # st.dataframe(team_stats)
 # assign each team a unique color per session for some visualizations
 clr_map_keys = set(df[f'Team_Name_div_{dv}'].values)
@@ -185,7 +183,6 @@ with scheduled_fixtures_xpdr:
     write_table(C, None, 110)
 
 # Display standings tables
-
 S = sorted(standings_display.Season.unique(), reverse=True)
 caption = f'Division {dv} Standings: Season {S[0]}'
 display_data = standings_display.query(f"Season == '{S[0]}'").sort_values(by=[f'Rank'],
@@ -212,7 +209,6 @@ with past_seasons_standings_xpdr:
         st.write(f'End of previous seasons data available for Division {dv}')
 
 # Top goal scorers  and keepers tables
-
 S = sorted(df_goal_pool.Season.unique(), reverse=True)
 
 caption = f'Division {dv} Top Goal Scorers ({S[0]})'
@@ -274,7 +270,7 @@ st.markdown(
     unsafe_allow_html=True)
 
 # scatter plots
-scatter_plots_xpdr = st.expander(f'Scatter Plots', expanded=True)
+scatter_plots_xpdr = st.expander(f'Scatter Plots', expanded=False)
 with scatter_plots_xpdr:
 
     st.markdown(
@@ -284,7 +280,7 @@ with scatter_plots_xpdr:
     st.plotly_chart(fig_standing, use_container_width=True)
 
 # bar plots
-bar_plots_xpdr = st.expander(f'Bar Plots', expanded=True)
+bar_plots_xpdr = st.expander(f'Bar Plots', expanded=False)
 with bar_plots_xpdr:
     goals_cols = st.columns((3, 1))
     shutout_cols = st.columns((3, 1))
@@ -304,20 +300,14 @@ with bar_plots_xpdr:
         # shutout_cols[0].plotly_chart(fig_shutout_funnel,use_container_width=True) # Not much info to show with a plot here
 
 # Time series
-
-
 fixtures_ = copy.deepcopy(fixtures)
 fixtures_['Goal Difference (Home Team - Visiting Team )'] = fixtures_['HomeTeamScore'] - fixtures_[
     'VisitingTeamScore']
 fixtures_['Goal Difference (Visiting Team - Home Team )'] = fixtures_.VisitingTeamScore - fixtures_.HomeTeamScore
 
 
-
 # time series plots
-time_series_xpdr = st.expander(label='Time Series Plots', expanded=True)
-
-# fixture_results_cols = st.columns([1, 1, 1, 3])
-# time_series_cols = st.columns([5, 1])
+time_series_xpdr = st.expander(label='Time Series Plots', expanded=False)
 
 with time_series_xpdr:
     both_team_selected = st.selectbox(label='Select a different Team',
@@ -332,11 +322,6 @@ with time_series_xpdr:
     both_fixture_results_test = pd.concat([fixtures_.loc[fixtures_.VisitingTeam == both_team_selected].copy(),
                                             fixtures_.loc[fixtures_.HomeTeam == both_team_selected].copy()])
 
-    # both_fixture_results_fig =  pfrts.home_or_away_results                                   
-    # both_fixture_results_fig = home_or_away_results(both_fixture_results_test, 'Both', 'HomeTeam',
-    #                                                 ['VisitingTeam', 'HomeTeam', 'HomeTeamScore',
-    #                                                     'VisitingTeamScore'], both_team_selected)
-
     both_fixture_results_fig = pfrts.home_or_away_results(both_fixture_results_test, 'Both', 'HomeTeam',
                                                     ['VisitingTeam', 'HomeTeam', 'HomeTeamScore',
                                                         'VisitingTeamScore'], both_team_selected)
@@ -346,6 +331,7 @@ with time_series_xpdr:
 
 
 # PIE CHARTS
+# more work to do here
 pie_xpdr = st.expander(label='Pie Charts', expanded=False)
 
 per_game_stats = copy.deepcopy(standings_display) 
@@ -385,6 +371,8 @@ with pie_xpdr:
 
 
 # CHORDS
+
+# more work to do here
 
 chord_data = fixtures[fixtures.Date.dt.year == yrr]
 
@@ -447,11 +435,14 @@ with xpdr:
 # ABOUT
 about_xpdr = st.expander('About')
 
-about_this_app = """This app is  a result of a hobby project done to visualize, and in some cases analyse, publicly 
-available data from the Vancouver Island Soccer League website (https://visl.org/). I have a long 
-list of things to do in my head to imporve the app. If you find it useful and would like to see more features 
-or contribute in any way, the best place to reach me is on the project's repository at 
+about_this_app = """This app is  a result of a fun hobby project done to visualize, and in some cases analyse, publicly 
+available data from the Vancouver Island Soccer League website [visl.org](https://visl.org/). The project was born out of 
+a personal desire to build machine learning based fixtures prediction models until the volume of data available, its quality 
+and the nature of the game itself made it impossible to build a reliable model. A basic ML model with 80% accuracy was built for
+just one team, but it was accurate only 20% of the time in the real world so far! I have a long list of things to do in my head 
+to imporve it. Some of them are listed below. If you would like to see more features 
+or contribute in any way, you are more than welcome! The project will be maintained in a repository at 
 https://github.com/Ze-sys/vizl. """
 with about_xpdr:
-    st.markdown(f'<li style="color: #42f57b;font-size:12px;border-radius:50%;">{about_this_app}</li>',
+    st.markdown(f'<li style="color: white;font-size:12px;border-radius:50%;">{about_this_app}</li>',
                 unsafe_allow_html=True)

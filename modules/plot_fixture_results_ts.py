@@ -2,7 +2,6 @@ import streamlit as st
 import plotly.express as px
 import pandas as pd
 
-
 # @st.cache(allow_output_mutation=True)
 def home_or_away_results(fixture_results, home_or_away, team_colors, hover_data,selected_team):
     if home_or_away == 'Away':
@@ -19,7 +18,6 @@ def home_or_away_results(fixture_results, home_or_away, team_colors, hover_data,
                     hover_data=hover_data,
                     color_discrete_sequence=px.colors.qualitative.Alphabet,
                     )
-    # fg['layout']['yaxis']['autorange'] = "reversed"
     fg.update_xaxes(showgrid=True, gridwidth=1, gridcolor='LightGray')
 
     fg.update_yaxes(showgrid=True, gridwidth=1, gridcolor='LightGray',
