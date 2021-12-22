@@ -27,7 +27,8 @@ a personal desire to build machine learning based fixtures prediction models unt
 
 # TODO LIST
 
--   More work needed to handle edge cases, specially with the pool selection feature
+-   More work needed to handle edge cases, specially with the pool selection feature.
+-   More work to do to increase efficiency in data handling and processing. The framework, streamlit, used is the fastest way to create data apps. It also comes with a a small caveat for some as it re-runs all or most ( not sure here) of the codes when a parameter is changed. That slows down things a bit, but definately not that slow.
 -   Fully automated testing
 -   Add a sidebar to select a team
 -   Add a sidebar to select a player
