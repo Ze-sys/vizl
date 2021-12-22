@@ -1,20 +1,16 @@
 
-from holoviews.element import path
 import streamlit as st
 import re
 import os
 import csv
 import copy
 import random
-import datetime
-import numpy as np
+import errno
 import pandas as pd
 import holoviews as hv
 import plotly.express as px
 from holoviews import opts, dim
-import plotly.graph_objects as go
 import streamlit.components.v1 as components
-# from bokeh.sampledata.les_mis import data
 import matplotlib as mpl
 
 # import the helper methods
@@ -45,7 +41,16 @@ def app_name(str):
     st.markdown(f'<h1 style="color: #42f57b;font-size:80px;border-radius:50%;">{str}</h1>',
                 unsafe_allow_html=True)
 
+
+def version_info():
+    #Rule: Version: <Major>.<Minor>.<Patch/Upgrade>
+    version = '0.0.0'
+    st.markdown(
+        f'''<h6 style="color:yellow;font-size:12px;border-radius:0%;">Version: v{version}</h6>''',
+        unsafe_allow_html=True)
+
 app_name('vizl')
+
 
 st.write(
     f'<h1 style="color: #754df3;font-size:15px;border-radius:0%;">A tool to visualize live and historical data from the visl.org website</h1>',
@@ -403,7 +408,7 @@ chord2.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
 try:
     os.makedirs('tmp_html_files')
 except OSError as e:
-    if e.errno != e.EEXIST:
+    if e.errno != errno.EEXIST:
         raise
 
 hv.save(chord1 + chord2, 'tmp_html_files/chord_all_fixtures_results.html')
@@ -455,3 +460,5 @@ https://github.com/Ze-sys/vizl. """
 with about_xpdr:
     st.markdown(f'<li style="color: white;font-size:12px;border-radius:50%;">{about_this_app}</li>',
                 unsafe_allow_html=True)
+
+version_info()
