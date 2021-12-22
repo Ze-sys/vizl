@@ -131,3 +131,4 @@ dmypy.json
 # Additional files and folder to ignore
 
 tmp_html_files/*
+**.vscode/
