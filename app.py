@@ -439,8 +439,8 @@ about_this_app = """This app is  a result of a fun hobby project done to visuali
 available data from the Vancouver Island Soccer League website [visl.org](https://visl.org/). The project was born out of 
 a personal desire to build machine learning based fixtures prediction models until the volume of data available, its quality 
 and the nature of the game itself made it impossible to build a reliable model. A basic ML model with 80% accuracy was built for
-just one team, but it was accurate only 20% of the time in the real world so far! I have a long list of things to do in my head 
-to imporve it. Some of them are listed below. If you would like to see more features 
+just one team, but it has been accurate only 20% of the time in the real world so far! I have a long list of things to do in my head 
+to imporve the app. Some of them are listed below. If you would like to see more features 
 or contribute in any way, you are more than welcome! The project will be maintained in a repository at 
 https://github.com/Ze-sys/vizl. """
 with about_xpdr:
