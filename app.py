@@ -2,6 +2,7 @@
 from holoviews.element import path
 import streamlit as st
 import re
+import os
 import csv
 import copy
 import random
@@ -397,6 +398,13 @@ chord1.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
             hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
 chord2.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
             hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
+
+# Create a directory to store files temporarily. I don't like it but it is a workaround to use Bokeh's chord diagram on streamlit 
+try:
+    os.makedirs('tmp_html_files')
+except OSError as e:
+    if e.errno != e.EEXIST:
+        raise
 
 hv.save(chord1 + chord2, 'tmp_html_files/chord_all_fixtures_results.html')
 HtmlFile = open("tmp_html_files/chord_all_fixtures_results.html", 'r', encoding='utf-8')
