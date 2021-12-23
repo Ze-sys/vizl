@@ -1,6 +1,6 @@
 # vizl
 
-A tool to visualise live and historical data from the visl.org website [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/ze-sys/vizl/main/app.py).
+A tool to visualise live and historical data from the visl.org website [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/ze-sys/vizl/main/app.py){:target="_blank"}
 
 # ABOUT
 
