@@ -1,7 +1,6 @@
-# vizl
+# vizl  [![Open app in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/ze-sys/vizl/main/app.py)
 
-A tool to visualise live and historical data from the visl.org website [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/ze-sys/vizl/main/app.py)
-
+A streamlit app to visualise live and historical data from the [visl.org](https://visl.org/) website
 # ABOUT
 
 This app is a result of a fun hobby project done to visualize, and in some cases analyse, publicly 
