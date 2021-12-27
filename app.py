@@ -30,7 +30,12 @@ cmap_r = cmap.reversed()
 hv.extension('bokeh')
 hv.output(size=1500)
 
-st.set_page_config(layout="wide")
+from PIL import Image
+
+vizl_icon = Image.open('visl_team_crests/vizl_icon.png')
+
+
+st.set_page_config(layout="wide",  page_title='vizl', page_icon='visl_team_crests/vizl_icon.png')
 pd.set_option('display.max_colwidth', None)
 
 
@@ -51,6 +56,7 @@ def version_info():
 
 app_name('vizl')
 
+# st.image('visl_team_crests/visl_team_crests.gif', width=75)
 
 st.write(
     f'<h1 style="color: #754df3;font-size:15px;border-radius:0%;">A tool to visualize live and historical data from the visl.org website</h1>',
