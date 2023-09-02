@@ -11,7 +11,7 @@ import holoviews as hv
 import plotly.express as px
 from holoviews import opts, dim
 import streamlit.components.v1 as components
-import matplotlib as mpl
+import matplotlib.cm as cm
 import plotly.graph_objects as go
 
 # import the helper methods
@@ -26,7 +26,7 @@ import modules.get_visl_fixture_and_standing_tables as gvfst
 import modules.plot_fixture_results_ts as pfrts
 
 
-cmap = mpl.cm.jet
+cmap = cm.jet
 cmap_r = cmap.reversed()
 hv.extension('bokeh')
 hv.output(size=1500)
