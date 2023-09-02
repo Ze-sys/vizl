@@ -3,7 +3,7 @@ import pandas as pd
 
 
 # team summary stats with multi-index
-@st.cache
+@st.cache_data
 def shutout_stats(df, dv):
     '''
     Function to  analyse shutout statisitcs of each team

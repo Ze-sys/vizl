@@ -1,7 +1,7 @@
 import streamlit as st
 import plotly.graph_objects as go
 
-@st.cache
+@st.cache_data
 def plot_shutout_bar(df, dv):
     '''
     Function to plot bar charts of total golas scored per season

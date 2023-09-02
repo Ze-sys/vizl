@@ -2,11 +2,11 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-@st.cache
+@st.cache_data
 def remove_special_chars(x):
     return x.replace("'", '')
 
-@st.cache
+@st.cache_data
 def get_visl_shutout_data(dv):
     '''
     Grab the data from the visl website using pandas read html method

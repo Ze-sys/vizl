@@ -12,6 +12,7 @@ import plotly.express as px
 from holoviews import opts, dim
 import streamlit.components.v1 as components
 import matplotlib as mpl
+import plotly.graph_objects as go
 
 # import the helper methods
 import modules.get_visl_shutout_data as gvsd
@@ -62,7 +63,10 @@ st.write(
     f'<h1 style="color: #754df3;font-size:15px;border-radius:0%;">A tool to visualize live and historical data from the visl.org website</h1>',
     unsafe_allow_html=True)
 
-@st.cache
+def random_string(length):
+    return ''.join(random.choice('0123456789ABCDEF') for i in range(length))
+
+@st.cache_data
 def remove_special_chars(x):
     return x.replace("'", '')
 
@@ -96,12 +100,12 @@ def write_table(x, width=None, height=None):
                  width, height)
     
 
-@st.cache
+@st.cache_data
 def df_to_csv(df):
     return df.to_csv().encode('utf-8')
 
 
-def csv_downloader(x):
+def csv_downloader(x, key=None):
     st.markdown(
         f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754DF3;"><br> {x.caption}</h6></br>''',
         unsafe_allow_html=True)
@@ -110,7 +114,7 @@ def csv_downloader(x):
         df_to_csv(x.data),
         x.caption + '.csv',
         "text/csv",
-        key='download-csv_format'
+        key=key #'download-csv_format'
     )
 
 dv = st.sidebar.selectbox(label='select a division', options=['div 1', 'div 2', 'div 3', 'div 4', 'div m'])
@@ -125,7 +129,7 @@ df = gvsd.get_visl_shutout_data(dv)
 df_goal = gvgd.get_visl_goals_data(dv)
 
 # extract data based on user selection of pool
-@st.cache
+@st.cache_data
 def team_div_pool_name(dv, pool):
     if dv != 'm':
         team_div_pool_name = f'(D{dv}{pool})'
@@ -135,7 +139,7 @@ def team_div_pool_name(dv, pool):
         return bool(re.search('(MA|MB)', team_div_pool_name))
 
 
-@st.cache
+@st.cache_data
 def filter_pool(df, dv, pool):
     '''
     Function to filter the data frame based on the pool selected
@@ -169,10 +173,13 @@ team_colors = {i: j for i, j in zip(clr_map_keys, clr_map_values)}
 # Extract standing and fixture table to display
 fixtures, standings = gvfst.get_visl_fixture_and_standing_tables(dv)
 # process the standing tables for better display
-standings_display = standings.reset_index().rename(columns={'index': 'Rank'})
-standings_display['Rank'] = standings_display['Rank'] + 1
+standings_display = standings.reset_index() #.rename(columns={'index': 'Pos'})
+# standings_display['Pos'] = standings_display['Pos'] + 1
 standings_display.Season = standings_display.Season.apply(lambda x: x.strftime('%Y')).apply(
     lambda x: x + f'/{int(x) + 1}')
+standings_display = standings_display.drop(columns=[0, 'Pos', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS']).iloc[1:,:]
+standings_display = standings_display.rename(columns={'index': 'Pos', 1: 'Team', 2: 'GP', 3: 'W', 4: 'D', 5: 'L', 6: 'GF', 7: 'GA', 8: 'PTS'})
+
 
 # Display fixtures tables
 caption = f'Division {dv} Latest Fixtures and Results'
@@ -182,7 +189,7 @@ display_data = fixtures[fixtures.Result != '-'].drop(columns=['HomeTeamScore', '
 # use class to display the data table, its caption and a download button
 C = CAPTION({'caption': caption, 'data': display_data.head(10), 'index': display_data.head(10).Date,
              'drop': display_data.Date.name})
-csv_downloader(C)  # <-- this is the download button
+csv_downloader(C, key=random_string(10))  # <-- this is the download button
 write_table(C, None, 400)  # <-- this is the table
 
 scheduled_fixtures_xpdr = st.expander('Show Scheduled Fixtures (if available)')
@@ -192,32 +199,38 @@ with scheduled_fixtures_xpdr:
         by=['Date', 'Result'], ascending=False).reset_index(drop=True)
 
     C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Date, 'drop': display_data.Date.name})
-    csv_downloader(C)
+    csv_downloader(C, key=random_string(10))
     write_table(C, None, 110)
 
 # Display standings tables
 S = sorted(standings_display.Season.unique(), reverse=True)
 caption = f'Division {dv} Standings: Season {S[0]}'
-display_data = standings_display.query(f"Season == '{S[0]}'").sort_values(by=[f'Rank'],
+display_data = standings_display.query(f"Season == '{S[0]}'").sort_values(by=[f'Pos'],
                                                                           ascending=True).reset_index(drop=True)
 
-C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Rank, 'drop': display_data.Rank.name})
+C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Pos, 'drop': display_data.Pos.name})
 csv_downloader(C)  # <-- this is the download button
 write_table(C, 1200, 400)  # <-- this is the table
 
 past_seasons_standings_xpdr = st.expander(f'Show Division {dv} Standings for previous seasons (if available)')
 
+
+
 with past_seasons_standings_xpdr:
     if len(S) > 1:
-        for s in S[1:]:
+        matching_rows = standings_display[standings_display.Team == 'Team'].index
+        start_index = 0
+
+        for s, idx in zip(S[1:], matching_rows):
             caption = f'Division {dv} Standings ({s})'
-            display_data = standings_display.query(f"Season == '{s}'").sort_values(by=[f'Rank'],
-                                                                                   ascending=True).reset_index(
-                drop=True)
+            display_data = standings_display.iloc[start_index:idx-1] #standings_display.query(f"Season == '{s}'").sort_values(by=[f'Pos'],
+                                                                      #             ascending=True).reset_index(drop=True)
             C = CAPTION(
-                {'caption': caption, 'data': display_data, 'index': display_data.Rank, 'drop': display_data.Rank.name})
+                {'caption': caption, 'data': display_data, 'index': display_data.Pos, 'drop': display_data.Pos.name})
             csv_downloader(C)
             write_table(C, 1200, 110)
+            start_index = idx 
+
     else:
         st.write(f'End of previous seasons data available for Division {dv}')
 
@@ -272,25 +285,51 @@ with past_season_shutout_pool_xpdr:
         else:
             st.write(f'End of previous seasons data available for Division {dv}')
 
-# show plot of rankings for all seasons
-fig_standing = psd.standings_plot(standings_display)
+# show plot of Posings for all seasons
+matching_rows = standings_display[standings_display.Team == 'Team'].index
+start_index = 0
+fg = go.Figure()
+for s, idx in zip(S[1:], matching_rows):
+        caption = f'Division {dv} Standings ({s})'
+        display_data = standings_display.iloc[start_index:idx-1]
+
+        fig_standing = psd.standings_plot(display_data)
 
 # plots
+        st.markdown(
+            f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754df3;"><br>Data 
+            visualizations</h6</br>''',
+            unsafe_allow_html=True)
 
-st.markdown(
-    f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754df3;"><br>Data 
-    visualizations</h6</br>''',
-    unsafe_allow_html=True)
+        # scatter plots
+        scatter_plots_xpdr = st.expander(f'Scatter Plots', expanded=False)
+        with scatter_plots_xpdr:
 
-# scatter plots
-scatter_plots_xpdr = st.expander(f'Scatter Plots', expanded=False)
-with scatter_plots_xpdr:
+            st.markdown(
+                f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:None;"><br>Team standings vs maximum 
+                points earned</h6></br>''',
+                unsafe_allow_html=True)
+            fg.add_trace(fig_standing.data[0])
 
-    st.markdown(
-        f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:None;"><br>Team standings vs maximum 
-        points earned</h6></br>''',
-        unsafe_allow_html=True)
-    st.plotly_chart(fig_standing, use_container_width=True)
+        start_index = idx
+
+fg.update_layout(
+    plot_bgcolor='rgba(0,0,0,0)',
+    font_size=12,
+    height=400,
+    width=700,
+    legend=dict(font_size=12, title="Season"),
+    title=f'Division {dv} Standings vs Maximum Points Earned',
+    xaxis_title="Maximum Points Earned",
+    yaxis_title="Standings",
+    yaxis=dict(autorange="reversed")
+)
+# use different colors for each team
+for i, j in zip(fg.data, team_colors.values()):
+    i.marker.color = j
+    
+
+st.plotly_chart(fg, use_container_width=True)
 
 # bar plots
 bar_plots_xpdr = st.expander(f'Bar Plots', expanded=False)
@@ -323,8 +362,12 @@ fixtures_['Goal Difference (Visiting Team - Home Team )'] = fixtures_.VisitingTe
 time_series_xpdr = st.expander(label='Time Series Plots', expanded=False)
 
 with time_series_xpdr:
+    # st.write(fixtures_.head(10))
+    options = list(set(fixtures_['HomeTeam']))
+    # drop nan
+    options = [x for x in options if str(x) != 'nan']
     both_team_selected = st.selectbox(label='Select a different Team',
-                                                            options=sorted(list(set(fixtures_['HomeTeam']))))
+                                                            options=sorted(options), index=0)
     st.markdown(
         f'''<h1 style="color: green;font-size:12px;border-radius:100%;background-color:#3D0669;">Hover over a 
         marker to see game details. Click on the legend marker for the selected ({both_team_selected}) team to 
@@ -348,14 +391,21 @@ with time_series_xpdr:
 pie_xpdr = st.expander(label='Pie Charts', expanded=False)
 
 per_game_stats = copy.deepcopy(standings_display) 
-per_game_stats['GFPG']= standings_display.GF.astype(int)/standings_display.GP.astype(int)
-per_game_stats['GAPG']= standings_display.GA.astype(int)/standings_display.GP.astype(int)
-per_game_stats['WPG']= standings_display.W.astype(int)/standings_display.GP.astype(int)
-per_game_stats['LPG']= standings_display.L.astype(int)/standings_display.GP.astype(int)
+matching_rows = per_game_stats[per_game_stats.Team == 'Team'].index
+start_index = 0
+
+for s, idx in zip(S[1:], matching_rows):
+    per_game_stats = per_game_stats.iloc[start_index:idx-1] #standings_display.query(f"Season == '{s}'").sort_values(by=[f'Pos'],
+                                                                      #             ascending=True).reset_index(drop=True)
+
+    per_game_stats['GFPG']= per_game_stats.GF.astype(int) / per_game_stats.GP.astype(int)
+    per_game_stats['GAPG']= per_game_stats.GA.astype(int) / per_game_stats.GP.astype(int)
+    per_game_stats['WPG']= per_game_stats.W.astype(int) / per_game_stats.GP.astype(int)
+    per_game_stats['LPG']= per_game_stats.L.astype(int) / per_game_stats.GP.astype(int)
 
 with pie_xpdr:
     pie_cols = st.columns(2)
-    fig_multi_pie = px.sunburst(standings_display, path=['Team', 'Season'], values='GF')
+    fig_multi_pie = px.sunburst(per_game_stats, path=['Team', 'Season'], values='GF')
     fig_multi_pie.update_layout(margin=dict(t=30, l=0, r=0, b=0), title_text='Goals Scored', width=500, height=500)
     pie_cols[0].plotly_chart(fig_multi_pie)
 
@@ -368,7 +418,7 @@ with pie_xpdr:
     pie_cols[0].plotly_chart(fig_multi_pie)
 
     
-    fig_multi_pie = px.sunburst(standings_display, path=['Team', 'Season'], values='GA')
+    fig_multi_pie = px.sunburst(per_game_stats, path=['Team', 'Season'], values='GA')
     fig_multi_pie.update_layout(margin=dict(t=30, l=0, r=0, b=0), title_text='Goals Conceded', width=500, height=500)
     pie_cols[1].plotly_chart(fig_multi_pie)
     

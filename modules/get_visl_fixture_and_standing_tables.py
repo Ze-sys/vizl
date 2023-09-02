@@ -6,21 +6,22 @@ import pandas as pd
 
 
 # the 4th table from top is the table that has standings data
-@st.cache
+@st.cache_data
 def get_visl_standing_table(website_tables):
-    return website_tables[4].rename(
-        columns={x: y for x, y in zip(range(8), ['Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS'])}).query(
-        f"Team != 'Team'").reset_index(drop=True)
+    return website_tables[4]
+# .rename(columns={x: y for x, y in zip(range(), ['Pos','Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS'])}).reset_index(drop=True)
 
 
 # the 2nd from last table has fixtures data
-@st.cache(allow_output_mutation=True) 
+@st.cache_data #(allow_output_mutation=True) 
 def get_visl_fixtures_table(website_tables):
     return website_tables[-2].dropna(axis=0, how='all')
 
-@st.cache
+
+
+@st.cache_data
 def get_visl_fixture_and_standing_tables(dv):
-    standings = pd.DataFrame(columns=['Season', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS'])
+    standings = pd.DataFrame(columns=['Pos', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS'])
     fixtures = pd.DataFrame(
         columns=['Schedule', 'Type', 'Date', 'Division', 'HomeTeam', 'Result', 'VisitingTeam', 'Field'])
     for reg_yrs in range(2019, 2023):

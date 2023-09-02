@@ -2,7 +2,7 @@
 import streamlit as st
 import plotly.express as px
 
-@st.cache
+@st.cache_data
 def plot_goal_funnel(df, dv, yr, team_color_map):
     '''
     

@@ -5,14 +5,17 @@ import numpy as np
 import random
 
 
-@st.cache
+@st.cache_data
 def standings_plot(standings_display):
     """
 
     """
+    # standings_display = standings_display[standings_display.W.apply(lambda x: isinstance(x, int))]
+    # standings_display = standings_display.iloc[1:,:]
+    # standings_display = standings_display.astype({'PTS': 'float64', 'W': 'float64', 'D': 'float64', 'L': 'float64', 'GF': 'float64'})
     fig = px.scatter(
         standings_display.astype({'PTS': 'float64', 'W': 'float64', 'D': 'float64', 'L': 'float64', 'GF': 'float64'}),
-        x='PTS', y='Rank', color='Season', size='GF', hover_data=['W', 'D', 'L'],
+        x='PTS', y='Pos', color='Season', size='GF', hover_data=['W', 'D', 'L'],
         hover_name="Team", color_continuous_scale=random.sample(px.colors.sequential.Turbo, 4)
     )
     for fig_data in fig.data: fig_data.update(mode='markers + lines')
@@ -34,8 +37,8 @@ if __name__ == '__main__':
     # Extract standing and fixture table to display
     fixtures, standings = gvfs.get_visl_fixture_and_standing_tables(dv)
     # process the standing tables for better display
-    standings_display = standings.reset_index().rename(columns={'index': 'Rank'})
-    standings_display['Rank'] = standings_display['Rank'] + 1
+    standings_display = standings.reset_index().rename(columns={'index': 'Pos'})
+    standings_display['Pos'] = standings_display['Pos'] + 1
     standings_display.Season = standings_display.Season.apply(lambda x: x.strftime('%Y')).apply(
         lambda x: x + f'/{int(x) + 1}')
 
