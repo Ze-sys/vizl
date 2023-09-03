@@ -11,9 +11,10 @@ import holoviews as hv
 import plotly.express as px
 from holoviews import opts, dim
 import streamlit.components.v1 as components
+from streamlit_folium import folium_static
 import matplotlib.cm as cm
 import plotly.graph_objects as go
-
+import folium
 # import the helper methods
 import modules.get_visl_shutout_data as gvsd
 import modules.get_visl_goals_data as gvgd
@@ -206,7 +207,7 @@ with scheduled_fixtures_xpdr:
 S = sorted(standings_display.Season.unique(), reverse=True)
 caption = f'Division {dv} Standings: Season {S[0]}'
 display_data = standings_display.query(f"Season == '{S[0]}'").sort_values(by=[f'Pos'],
-                                                                          ascending=True).reset_index(drop=True)
+                                                                          ascending=True).reset_index(drop=True).iloc[1:,:]
 
 C = CAPTION({'caption': caption, 'data': display_data, 'index': display_data.Pos, 'drop': display_data.Pos.name})
 csv_downloader(C)  # <-- this is the download button
@@ -436,48 +437,51 @@ with pie_xpdr:
 # CHORDS
 
 # more work to do here
-
-chord_data = fixtures[fixtures.Date.dt.year == yrr]
-
-chord1 = hv.Chord(chord_data[['HomeTeam', 'Field']])
-chord1.opts(fontscale=.75, width=45, height=45, title=f'Division {dv} Home Games Locations, season {yrr}/{yrr + 1}',
-            label_text_font_size='8pt')
-chord1.opts(
-    opts.Chord(cmap='Category20', edge_cmap='Category20', edge_color=dim('Field').str(),
-                labels='index', node_color=dim('index').str())
-)
-
-chord2 = hv.Chord(chord_data[['VisitingTeam', 'Field']])
-chord2.opts(fontscale=.75, width=45, height=45, title=f'Division {dv} Away Games Locations, season {yrr}/{yrr + 1}',
-            label_text_font_size='8pt')
-chord2.opts(
-    opts.Chord(cmap='Category20', edge_cmap='Category20', edge_color=dim('Field').str(),
-                labels='index', node_color=dim('index').str())
-)
-
-chord1.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
-            hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
-chord2.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
-            hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
-
-# Create a directory to store files temporarily. I don't like it but it is a workaround to use Bokeh's chord diagram on streamlit 
-try:
-    os.makedirs('tmp_html_files')
-except OSError as e:
-    if e.errno != errno.EEXIST:
-        raise
-
-hv.save(chord1 + chord2, 'tmp_html_files/chord_all_fixtures_results.html')
-HtmlFile = open("tmp_html_files/chord_all_fixtures_results.html", 'r', encoding='utf-8')
-source_code = HtmlFile.read()
-html_background = "<style>:root {background-color:#754DF3;}</style>"
-source_code = html_background + source_code
-# st.write(source_code)
 chord_xpdr = st.expander(label='Chord Diagrams', expanded=False)
+
+try:
+    chord_data = fixtures[fixtures.Date.dt.year == yrr]
+
+    chord1 = hv.Chord(chord_data[['HomeTeam', 'Field']])
+    chord1.opts(fontscale=.75, width=45, height=45, title=f'Division {dv} Home Games Locations, season {yrr}/{yrr + 1}',
+                label_text_font_size='8pt')
+    chord1.opts(
+        opts.Chord(cmap='Category20', edge_cmap='Category20', edge_color=dim('Field').str(),
+                    labels='index', node_color=dim('index').str())
+    )
+
+    chord2 = hv.Chord(chord_data[['VisitingTeam', 'Field']])
+    chord2.opts(fontscale=.75, width=45, height=45, title=f'Division {dv} Away Games Locations, season {yrr}/{yrr + 1}',
+                label_text_font_size='8pt')
+    chord2.opts(
+        opts.Chord(cmap='Category20', edge_cmap='Category20', edge_color=dim('Field').str(),
+                    labels='index', node_color=dim('index').str())
+    )
+
+    chord1.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
+                hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
+    chord2.opts(bgcolor='rgba(0,0,0,0)', padding=0.1,
+                hooks=[lambda p, _: p.state.update(border_fill_color='rgba(0,0,0,0)')])
+
+    # Create a directory to store files temporarily. I don't like it but it is a workaround to use Bokeh's chord diagram on streamlit 
+    try:
+        os.makedirs('tmp_html_files')
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    hv.save(chord1 + chord2, 'tmp_html_files/chord_all_fixtures_results.html')
+    HtmlFile = open("tmp_html_files/chord_all_fixtures_results.html", 'r', encoding='utf-8')
+    source_code = HtmlFile.read()
+    html_background = "<style>:root {background-color:#754DF3;}</style>"
+    source_code = html_background + source_code
+    # st.write(source_code)
+    with chord_xpdr:
+        components.html(source_code, width=1400, height=730, scrolling=True)
+except:
+    st.write('No data available for chord plots for the selected year')
+
 with chord_xpdr:
-    components.html(source_code, width=1400, height=730, scrolling=True)
-    import folium
-    from streamlit_folium import folium_static
 
     m = folium.Map(location=[48.4456201780829, -123.3645977], zoom_start=13, tiles='OpenStreetMap')
 
