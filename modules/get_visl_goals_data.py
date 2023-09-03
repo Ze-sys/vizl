@@ -16,7 +16,11 @@ def get_visl_goals_data(dv):
     for reg_yrs in range(2019, 2023):
 
         url = f'https://visl.org/webapps/spappz_live/division_player_stats?reg_year={reg_yrs}&division={dv}&sched_type=&combined=&sortby='
-        table = pd.read_html(url, match='Goals')
+        try:
+            table = pd.read_html(url, match='Goals')
+        except:
+            st.write(f'No goal scorers data for division {dv} for  {reg_yrs} season') 
+        
         year_idx = pd.Timestamp(year=reg_yrs - 1, month=9, day=1)
 
         for i in range(1, len(table)):

@@ -17,11 +17,15 @@ def get_visl_shutout_data(dv):
     for reg_yrs in range(2019, 2023):
 
         url = f'https://visl.org/webapps/spappz_live/division_goalie_stats?reg_year={reg_yrs}&division={dv}&sched_type=&combined=&sortby='
-        table = pd.read_html(url, match='Player Name')
+        try:
+            table = pd.read_html(url, match='Player Name')
+        except:
+            st.write(f'No shutouts data for division {dv} for  {reg_yrs} season')            
+
         year_idx = pd.Timestamp(year=reg_yrs - 1, month=9, day=1)
 
         for i in range(1, len(table)):
-            if table[i].shape[0] > 2:  # ignore tables wihtout entry
+            if table[i].shape[0] > 2:  # ignore tables without entry
                 df = pd.DataFrame(table[i])
                 df = df.rename(columns=df.iloc[0]).drop(df.index[0])
                 yr = np.tile(year_idx, (len(df), 1))
