@@ -24,11 +24,11 @@ def get_visl_fixture_and_standing_tables(dv):
     standings = pd.DataFrame(columns=['Pos', 'Team', 'GP', 'W', 'D', 'L', 'GF', 'GA', 'PTS'])
     fixtures = pd.DataFrame(
         columns=['Schedule', 'Type', 'Date', 'Division', 'HomeTeam', 'Result', 'VisitingTeam', 'Field'])
-    for reg_yrs in range(2019, 2023):
+    for reg_yrs in range(2019, 2025):
+        url = f'https://visl.org/webapps/spappz_live/div_stats?reg_year={reg_yrs}&division={dv}&sched_pool=&sched_type=reg&firsttime=0'
         website_tables = pd.read_html(
-            # f'https://visl.org/webapps/spappz_live/div_stats?reg_year={reg_yrs}&division={dv}&sched_pool=&sched_type=reg')
-            f'https://visl.org/webapps/spappz_live/div_stats?reg_year={reg_yrs}&division={dv}&sched_type=reg&combined=&sortby='
-        )
+            url)
+
 
         standings_table = get_visl_standing_table(website_tables)
         standings_table['Season'] = pd.Timestamp(year=reg_yrs - 1, month=9, day=1)

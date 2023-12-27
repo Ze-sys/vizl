@@ -85,7 +85,7 @@ class CAPTION:
         self.caption_handle = st.columns(1)
 
         '''
-        Add more captions here to be shown for figures
+        # Add more captions here to be shown for figures
         '''
 
 
@@ -337,7 +337,7 @@ bar_plots_xpdr = st.expander(f'Bar Plots', expanded=False)
 with bar_plots_xpdr:
     goals_cols = st.columns((3, 1))
     shutout_cols = st.columns((3, 1))
-    yrr = st.sidebar.slider(label='select year', min_value=2018, max_value=2022, value=2019, )
+    yrr = st.sidebar.slider(label='select year', min_value=2018, max_value=2025, value=2019, )
     fig_shutout_funnel = psf.plot_shutout_funnel(df, dv, yrr, team_colors)
     fig_goal_funnel = pgf.plot_goal_funnel(df_goal, dv, yrr,team_colors)
 
@@ -370,7 +370,7 @@ with time_series_xpdr:
     both_team_selected = st.selectbox(label='Select a different Team',
                                                             options=sorted(options), index=0)
     st.markdown(
-        f'''<h1 style="color: green;font-size:12px;border-radius:100%;background-color:#3D0669;">Hover over a 
+        f'''<h1 style="color: green;font-size:18px;border-radius:0%;background-color:#3D0669;">Hover over a 
         marker to see game details. Click on the legend marker for the selected ({both_team_selected}) team to 
         hide its home game results. 
         Home Team markers above the zero line show a win for the selected ({both_team_selected}) team. Other Markers 

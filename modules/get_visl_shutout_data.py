@@ -14,9 +14,12 @@ def get_visl_shutout_data(dv):
     OUTPUT: data frame
     '''
     all_tables = pd.DataFrame([])
-    for reg_yrs in range(2019, 2023):
+    for reg_yrs in range(2019, 2025):
+        if reg_yrs < 2022:
+            url = f'https://visl.org/webapps/spappz_live/division_goalie_stats?reg_year={reg_yrs}&division={dv}&sched_type=reg&sortby='
+        else:
+            url = f'https://visl.org/webapps/spappz_live/division_goalie_stats?reg_year={reg_yrs}&division={dv}&sched_pool=A&sched_type=reg&firsttime=0'
 
-        url = f'https://visl.org/webapps/spappz_live/division_goalie_stats?reg_year={reg_yrs}&division={dv}&sched_type=reg&combined=&sortby='
         try:
             table = pd.read_html(url, match='Player Name')
         except:

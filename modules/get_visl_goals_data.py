@@ -13,7 +13,7 @@ def get_visl_goals_data(dv):
     '''
 
     all_tables = pd.DataFrame([])
-    for reg_yrs in range(2019, 2023):
+    for reg_yrs in range(2019, 2025):
 
         url = f'https://visl.org/webapps/spappz_live/division_player_stats?reg_year={reg_yrs}&division={dv}&sched_type=reg&combined=&sortby='   
         try:

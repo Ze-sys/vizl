@@ -30,8 +30,8 @@ def plot_goals_bar(df, dv):
         xaxis=dict(
             title='Season',
             tickmode='array',
-            tickvals=[i for i in range(2018, 2022)],
-            ticktext=[f'{i}/{i + 1}' for i in range(2018, 2022)]
+            tickvals=[i for i in range(2018, 2025)],
+            ticktext=[f'{i}/{i + 1}' for i in range(2018, 2025)]
         )
     )
     return fig
