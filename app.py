@@ -83,10 +83,9 @@ class CAPTION:
         self.col_to_index = dict_.get('index')  # column name of the data frame to be shown as index
         self.col_to_drop = dict_.get('drop')  # column name of the data frame to be dropped
         self.caption_handle = st.columns(1)
-
-        '''
-        # Add more captions here to be shown for figures
-        '''
+        self.caption_handle[0].markdown(
+            f'''<h6 style="color:white;font-size:16px;border-radius:0%;background-color:#754DF3;"><br> {self.caption}</h6></br>''',
+            unsafe_allow_html=True)
 
 
 def write_table(x, width=None, height=None):
