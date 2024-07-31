@@ -24,7 +24,7 @@ def get_visl_goals_data(dv):
         year_idx = pd.Timestamp(year=reg_yrs - 1, month=9, day=1)
 
         for i in range(1, len(table)):
-            if table[i].shape[0] > 1:  # ignore tables wihtout entry
+            if table[i].shape[0] > 1:  # ignore tables without entry
                 # A work around to skip rows showing top scoring player(s) photos:
                 # take the ith table (table[i]), which usually contains all goal scorers, 
                 # remove rows that contain the string "Current Goal Scoring" in the first col ([0]),
@@ -34,7 +34,7 @@ def get_visl_goals_data(dv):
                     drop=True)
                 df = pd.DataFrame(tbl)
                 df = df.rename(columns=df.iloc[0]).drop(df.index[0])
-                yr = np.tile(year_idx, (len(df), 1))
+                yr = [year_idx] * len(df)  # Ensure yr is a 1-dimensional list
                 df['Year'] = yr
                 #             display(df)  # this would print each year and pool table data
                 all_tables = pd.concat([all_tables, df], axis=0, ignore_index=True)

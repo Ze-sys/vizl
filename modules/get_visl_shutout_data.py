@@ -31,7 +31,7 @@ def get_visl_shutout_data(dv):
             if table[i].shape[0] > 2:  # ignore tables without entry
                 df = pd.DataFrame(table[i])
                 df = df.rename(columns=df.iloc[0]).drop(df.index[0])
-                yr = np.tile(year_idx, (len(df), 1))
+                yr = [year_idx] * len(df)  # Ensure yr is a 1-dimensional list
                 df['Year'] = yr
                 #             display(df)  # this would print each year and pool table data
                 all_tables = pd.concat([all_tables, df], axis=0, ignore_index=True)

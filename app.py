@@ -129,31 +129,39 @@ df = gvsd.get_visl_shutout_data(dv)
 df_goal = gvgd.get_visl_goals_data(dv)
 
 # extract data based on user selection of pool
+
 @st.cache_data
 def team_div_pool_name(dv, pool):
-    if dv != 'm':
-        team_div_pool_name = f'(D{dv}{pool})'
-        return bool(re.search('(D1|D2|D3A|D3B|D4A|D4B)', team_div_pool_name))
-    elif dv == 'm' and pool == 'A' or pool == 'B':
-        team_div_pool_name = f'(M{pool})'
-        return bool(re.search('(MA|MB)', team_div_pool_name))
-
+    try:
+        if dv != 'm':
+            team_div_pool_name = f'(D{dv}{pool})'
+            return bool(re.search('(D1|D2|D3A|D3B|D4A|D4B)', team_div_pool_name))
+        elif dv == 'm' and (pool == 'A' or pool == 'B'):
+            team_div_pool_name = f'(M{pool})'
+            return bool(re.search('(MA|MB)', team_div_pool_name))
+    except Exception as e:
+        st.error(f"An error occurred in team_div_pool_name: {e}")
+        return False
 
 @st.cache_data
 def filter_pool(df, dv, pool):
     '''
     Function to filter the data frame based on the pool selected
     INPUT: 
-    df: data frame created from the  shutout Scorers Leader board
+    df: data frame created from the shutout Scorers Leader board
     pool str: A, B, ...
     Returns: data frame filtered based on the pool selected
     '''
-    df = df[df[f'Team_Name_div_{dv}'].apply(lambda x: team_div_pool_name(dv, pool))]
-    df = df.reset_index().rename(columns={'Year': 'Season'})
-    df.Season = df.Season.apply(lambda x: x.strftime('%Y')).apply(lambda x: x + f'/{int(x) + 1}')
-
-    return df
-
+    try:
+        df = df[df[f'Team_Name_div_{dv}'].apply(lambda x: team_div_pool_name(dv, pool))]
+        df = df.reset_index().rename(columns={'Year': 'Season'})
+        df['Season'] = pd.to_datetime(df['Season'], errors='coerce')
+        df = df.dropna(subset=['Season'])
+        df['Season'] = df['Season'].apply(lambda x: x.strftime('%Y')).apply(lambda x: x + f'/{int(x) + 1}')
+        return df
+    except Exception as e:
+        st.error(f"An error occurred in filter_pool: {e}")
+        return df  # Return the original dataframe in case of error
 
 pool = st.sidebar.selectbox(label='select pool', options=['A', 'B'], )
 df_shutout_pool = filter_pool(df, dv, pool)
